@@ -1,0 +1,177 @@
+![logo_ironhack_blue 7](https://user-images.githubusercontent.com/23629340/40541063-a07a0a8a-601a-11e8-91b5-2f13e4e6b441.png)
+
+# Lab \| Exploring the `sample_superstore` Dataset
+
+In this lab, you will work with the `sample_superstore` dataset to practice creating, inspecting, and manipulating dataframes. Follow the steps below to complete the tasks.
+
+## Step 1: Importing the Dataset
+
+-   Load the `sample_superstore` dataset into a dataframe. You can find this dataset in the `datasets` package or download it as a CSV file from online sources.
+
+    ```{r}
+    superstore <- read.csv("Dataset/Sample - Superstore.csv")
+    ```
+
+-   Save the dataframe as `superstore`.
+
+    **Hint:** Use the `read.csv()` or `read_excel()` function to import the dataset.
+
+## Step 2: Inspecting the Dataframe
+
+-   Display the first 10 rows of the dataframe using the `head()` function.
+
+    ```{r}
+    superstore
+    ```
+
+-   Use the `str()` function to inspect the structure of the dataframe. What are the data types of the columns?
+
+    ```{r}
+    str(superstore)
+    ```
+
+-   Use the `summary()` function to get a summary of the dataframe. What insights can you gather from the summary?
+
+    ```{r}
+    summary(superstore)
+    ```
+
+## Step 3: Accessing Data
+
+-   Extract the `Sales` column as a vector using the `$` operator.
+
+    ```{r}
+    sales <- superstore$Sales
+    #print(sales)
+    ```
+
+-   Subset the first 15 rows and the columns `Order ID`, `Customer Name`, and `Sales`.
+
+    ```{r}
+    order_cust_sales <- superstore[1:15, c("Order.ID", "Customer.Name", "Sales")]
+    order_cust_sales
+    ```
+
+-   Use the `nrow()` and `ncol()` functions to determine the number of rows and columns in the dataframe.
+
+    ```{r}
+    nrow(superstore)
+    ncol(superstore)
+    ```
+
+## Step 4: Filtering Data
+
+-   Filter the dataframe to show only rows where the `Profit` is greater than 100.
+
+    ```{r}
+    profit_100 <- superstore[superstore$Profit > 100 , ]
+    profit_100
+
+    ```
+
+-   Filter the dataframe to show only rows where the `Category` is `"Furniture"` and the `Sales` are greater than 500.
+
+    ```{r}
+    furniture_500 <- superstore[(superstore$Category == "Furniture") & (superstore$Sales > 500), ]
+    furniture_500
+    ```
+
+-   Filter the dataframe to show only rows where the `Region` is `"West"` and the `Quantity` is greater than 5.
+
+    ```{r}
+    west_5 <- superstore[(superstore$Region == "West") & (superstore$Quantity > 5), ]
+    west_5
+    ```
+
+## Step 5: Adding and Modifying Columns
+
+-   Add a new column called `Profit Margin` that calculates the profit margin as `(Profit / Sales) * 100`.
+
+    ```{r}
+    superstore <- transform(superstore,
+                            Profit.Margin = (Profit / Sales) * 100)
+
+    ```
+
+-   Modify the `Sales` column by rounding the values to 2 decimal places.
+
+    ```{r}
+    # superstore <- transform(superstore, Sales = round(Sales, 2))
+    ```
+
+-   Remove the `Postal Code` column from the dataframe using the `subset()` or `select()` function.
+
+    ```{r}
+    library(dplyr)
+    superstore <- select(superstore, -Postal.Code)
+    ```
+
+## Step 6: Handling Missing Data
+
+-   Check for missing values in the dataframe using the `is.na()` function. Are there any missing values?
+
+    ```{r}
+    sum(is.na(superstore))
+    sum(is.na(superstore$Sales))
+    ```
+
+-   If there are missing values, remove rows with missing data using the `na.omit()` function.
+
+    -   there are no missing values
+
+-   Replace any missing values in the `Sales` column with the mean of the `Sales` column using the `na.fill()` function.
+
+## Step 7: Advanced Analysis (Optional)
+
+-   Group the dataframe by `Region` and calculate the total `Sales` and `Profit` for each region.
+
+    ```{r}
+    region_sales_profit <- superstore %>%
+      group_by(Region) %>%
+      summarise(
+        Total_Sales = sum(Sales, na.rm = TRUE),
+        Total_Profit = sum(Profit, na.rm = TRUE)
+      )
+
+    print(region_sales_profit)
+    ```
+
+-   Create a new column called `Discount Level` that categorizes the `Discount` column into:
+
+    -   `"Low"` (0-0.2)
+
+    -   `"Medium"` (0.2-0.5)
+
+    -   `"High"` (0.5-1)
+
+    ```{r}
+        superstore <- superstore %>% 
+                        mutate(Discount.Level = case_when(
+                          Discount >= 0  & Discount < 0.2 ~ "Low",
+                          Discount >= 0.2  & Discount < 0.5 ~ "Medium",
+                          Discount >= 0.5  & Discount <= 1 ~ "High",
+                          TRUE ~ NA_character_
+                        ))
+        superstore
+    ```
+
+-   Sort the dataframe by `Sales` in descending order.
+
+    ```{r}
+    superstore <- superstore %>% arrange(desc(Sales))
+    superstore
+    ```
+
+## Deliverables
+
+-   Submitted notebook (or file) with your responses to each of the exercises.
+
+## Submission
+
+-   Upon completion, add your deliverables to git.
+-   Then commit git and push your branch to the remote.
+-   Make a pull request and paste the PR link in the submission field in the Student Portal.
+
+<br>
+
+**Good luck!**
